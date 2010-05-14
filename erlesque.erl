@@ -1,8 +1,9 @@
--module(erlesque).
+-module(erlesque_worker).
 -export([start/2, magic/2, test_job/1]).
 -export([parse_resque_job/1]).
 
 start(Address, Queues) ->
+    % Check that Queues is not empty
 	case erldis:connect(Address) of
 		{ok, Client} ->
 			io:format("Connected to redis server ~s~n", [Address]),
@@ -29,7 +30,54 @@ get_job(Client, [First_queue|Other_queues], All_queues) ->
 			end;
 		_ -> {error}
 	end.
-	
+
+% stubs	
+working() ->
+    {ok}.
+
+workers() ->
+    {ok}.
+
+worker_exists(Worker_id) ->
+    {ok}.
+
+working_on(Job_id) ->
+    {ok}.
+
+queues() ->
+    {ok}.
+
+shutdown(Worker_id) ->
+    {ok}.
+
+pause(Worker_id) ->
+    {ok}.
+
+unpause(Worker_id) ->
+    {ok}.
+
+register_worker() ->
+    {ok}.
+
+unregister_worker() ->
+    {ok}.
+
+done_working() ->
+    {ok}.
+
+processed() ->
+    {ok}.
+
+started() ->
+    {ok}.
+
+state(Worker_id) ->
+    {ok}.
+
+log_message() ->
+    {ok}.
+% /stubs
+
 magic(Job, Args) ->
 	Fun_str = string:concat("fun(A) -> ", string:concat(Job, "(A) end.")),
 	{ok, Tokens, _} = erl_scan:string(Fun_str),
@@ -37,6 +85,7 @@ magic(Job, Args) ->
 	{value, Fun, _} = erl_eval:expr(Form, []),
 	Fun(Args).
 	
+% Need to find an Erlang JSON parser
 parse_resque_job(String) ->
 	Data = string:tokens(String, "\"{}[],"),
 	LessData = [X || X <- Data, X /= ":"],
